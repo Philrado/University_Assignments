@@ -1,0 +1,41 @@
+original
+
+
+/* Inserts r into the ordered dictionary. It throws a DictionaryException if a
+	record with the same key as r is already in the dictionary. */
+	public void put (Record r) throws DictionaryException {
+		
+		// If the tree is empty, a root is created.
+		if (root == null){	
+			root = new Node(r);
+		}
+		
+		// Will check if r is the current node and throw an exception. 
+		if (currentPosition.getKeyPair().compareTo(r.getKey()) == 0){
+			currentPosition = root;
+			throw new DictionaryException("REQUEST FAILED: " + r + " is ALREADY a key in the dictionary.");
+		}
+		
+		// Checks if the key should be placed to the left of the current position.
+		if (currentPosition.getKeyPair().compareTo(r.getKey()) < 0){
+			// If the left child is a leaf, put the record r at the left child.
+			if (currentPosition.getLeft() == null){
+				currentPosition.setLeft(new Node(r));
+			}
+			// Otherwise the left child is not a leaf, so recursively put the current node into the search.
+			else{
+				put(currentPosition.getLeft().getRecord());
+			}	
+		}
+		// Checks if the key should be placed to the right of the current position.
+		else {
+			// If the right child is a leaf, put the record r at the right child.
+			if (currentPosition.getRight() == null){
+				currentPosition.setRight(new Node(r));
+			}
+			// Otherwise the right child is not a leaf, so recursively put the current node into the search.
+			else{
+				put(currentPosition.getRight().getRecord());
+			}	
+		}
+	}

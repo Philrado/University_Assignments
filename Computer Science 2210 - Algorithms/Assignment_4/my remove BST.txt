@@ -1,0 +1,72 @@
+public boolean remove(Node paramNode) throws DictionaryException {
+		
+		Node currentNode = root;
+		Node parent = root;
+		
+		boolean leftChild = false;
+		
+		if (paramNode.isLeaf()) {
+			throw new DictionaryException("This key is not in the dictionary, and therefore cannot be removed.");
+		}
+		
+		while(currentNode != paramNode){
+			parent = currentNode;
+			if(currentNode.getRecord().getKey().compareTo(paramNode.getRecord().getKey()) < 0){
+				currentNode = currentNode.getLeft();
+				leftChild = true;
+			}else{
+				currentNode = currentNode.getRight();
+				leftChild = false;
+			}
+			if(currentNode == null){
+				return false;
+			}
+		}
+		
+		// Node was found:
+		
+		//Case 1: if node to be deleted has no children
+		if(currentNode.getLeft().isLeaf() && currentNode.getRight().isLeaf()){
+			if(currentNode==root){
+				root = null;
+			}
+			if(leftChild == true){
+				parent.setLeft(null);
+			}else{
+				parent.setRight(null);
+			}
+		}
+		
+		//Case 2 : if node to be deleted has only one child
+		else if(currentNode.getRight().isLeaf()){
+			if(currentNode==root){
+				root = currentNode.getLeft();
+			}else if(leftChild){
+				parent.setLeft(currentNode.getLeft());
+			}else{
+				parent.setRight(currentNode.getLeft());
+			}
+		}
+		else if(currentNode.getLeft().isLeaf()){
+			
+			if(currentNode==root){
+				root = currentNode.getRight();
+			}else if(leftChild){
+				parent.setLeft(currentNode.getRight());
+			}else{
+				parent.setRight(currentNode.getRight());
+			}
+		}else if(!currentNode.getLeft().isLeaf() && !currentNode.getRight().isLeaf()){
+			//now we have found the minimum element in the right sub tree
+			Node successorNode = successor(currentNode, currentNode.getKeyPair());
+			if(currentNode == root){
+				root = successorNode;
+			}else if(leftChild){
+				parent.setLeft(successorNode);
+			}else{
+				parent.setRight(successorNode);
+			}			
+			successorNode.setLeft(currentNode.getLeft());
+		}		
+		return true;
+	}
