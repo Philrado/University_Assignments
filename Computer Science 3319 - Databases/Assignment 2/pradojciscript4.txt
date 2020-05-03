@@ -1,0 +1,38 @@
+-- ASSIGNMENT 2 SCRIPT 4:
+
+USE pradojciassign2db;
+
+-- Delete all doctors that got their license before Jan 1, 1965.
+-- Note: this command causes an intended error since at least one doctor exists that is referenced in 
+--   another table as a foreign key, due to a lack of ON DELETE CASCADE used in this table.
+DELETE FROM doctor WHERE licedate < '1965-01-01';
+-- Result: nothing can be removed unless you remove from the hospital specifically referencing that doctor.
+
+-- Create a view showing patient first/last names treated by hospital head doctors, made heads after Dec 31, 1995, and the doctor's last name and hospital name. 
+CREATE VIEW file4view AS SELECT patient.fname, patient.lname, doctor.lname AS "doctorname", hospname FROM patient, doctor JOIN hospital WHERE licenumb IN (SELECT headdoclicenumb FROM hospital WHERE headdocstartdate > '1995-12-31') AND licenumb = headdoclicenumb AND ohip IN (SELECT patientohip FROM patientdoctor WHERE doclicenumb = licenumb);
+
+-- Prove that the view works by selected all rows from it.
+SELECT * FROM file4view;
+
+-- Show all data from the doctor and patientdoctor table.
+SELECT * FROM doctor;
+SELECT * FROM patientdoctor;
+
+-- Delete doctor 'Clooney' from the table.
+DELETE FROM doctor WHERE lname = 'Clooney';
+
+-- Show the doctors table to prove the previous command was successful.
+SELECT * FROM doctor;
+
+-- Show what the cascade did to the patientdoctor table.
+SHOW CREATE TABLE patientdoctor;
+
+-- Show all the rows of the doctor table.
+SELECT * FROM doctor;
+
+-- Delete all the Surgeons from the doctor table.
+DELETE FROM doctor WHERE specialty = 'Surgeon';
+-- Result: the delete command was unsuccessfull since doctor Aziz's ID is referenced as a foreign key in the hospital table
+-- as it's head doctor. Therefore he can't be removed unless he is removed as head doctor. 
+-- This is because the table was designed according to the ERD to always have a head doctor. 
+

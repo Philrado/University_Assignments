@@ -1,0 +1,56 @@
+-- ASSIGNMENT 2 SCRIPT 3:
+
+USE pradojciassign2db;
+
+-- Show last name of all patients:
+-- Query #1
+SELECT lname FROM patient;
+
+-- Show the last names of patients (no repeats):
+-- Query #2
+SELECT DISTINCT lname FROM patient;
+
+-- Show data in doctor table in order of last name:
+-- Query #3
+SELECT * FROM doctor ORDER BY lname;
+
+-- Show name and id of all hospitals with over 1500 beds:
+-- Query #4
+SELECT hospname, hospcode FROM hospital WHERE bednumb>1500;
+
+-- List the last/first name of doctors who work at St. Josephs (using hospital name as the look up):
+-- Query #5
+SELECT lname, fname FROM doctor WHERE worksathospcode IN (SELECT hospcode FROM hospital WHERE hospname = 'St. Joseph');
+
+-- List the first/last name of patients whose last name begins with "G":
+-- Query #6
+SELECT fname, lname FROM patient WHERE lname LIKE "G%";
+
+-- List the first/last name of patients treated by doctor Clooney:
+-- Query #7
+SELECT fname, lname FROM patient WHERE ohip IN (SELECT patientOHIP FROM patientdoctor WHERE doclicenumb IN (SELECT licenumb FROM doctor WHERE lname = "Clooney"));
+
+-- List the hospital name, city and it's head doctor's last name:
+-- Query #8
+SELECT hospname, city, lname FROM hospital, doctor WHERE headdoclicenumb  = licenumb;
+
+-- Find the total number of beds for all hospitals. Give the result the nice title "Total Number of Beds":
+-- Query #9
+SELECT SUM(bednumb) AS "Total Number of Beds" FROM hospital;
+
+-- List the first names of the patient and the first name of the doctor for all patients treated by a head doctor:
+-- Query #10
+SELECT patient.fname, doctor.fname FROM patient, doctor WHERE licenumb IN (SELECT headdoclicenumb FROM hospital) AND ohip IN (SELECT patientOHIP FROM patientdoctor WHERE doclicenumb IN (SELECT headdoclicenumb FROM hospital));
+
+-- Find all the surgeons (last/first name) working at Victoria hospital: 
+-- Query #11
+SELECT fname, lname FROM doctor WHERE specialty = 'Surgeon' AND worksathospcode IN (SELECT hospcode FROM hospital WHERE hospname = 'Victoria');
+
+-- Find the first name of lazy or new doctors who don't treat anyone:
+-- Query #12
+SELECT fname FROM doctor WHERE licenumb NOT IN (SELECT doclicenumb FROM patientdoctor);
+
+-- Find all doctors (last/first name) who treat MORE than one patient:
+-- Query #13
+SELECT lname, fname FROM doctor WHERE licenumb IN (SELECT doclicenumb FROM patientdoctor GROUP BY doclicenumb HAVING COUNT(*)>1);
+

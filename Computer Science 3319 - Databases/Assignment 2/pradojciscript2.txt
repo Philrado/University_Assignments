@@ -1,0 +1,70 @@
+-- ASSIGNMENT 2 SCRIPT 2:
+
+USE pradojciassign2db;
+
+-- Load data in with "LOAD DAT LOCAL INFILE".
+SELECT * FROM patient;
+LOAD DATA LOCAL INFILE '/home/centos/assignment2/tempdata.txt' 
+REPLACE INTO TABLE patient
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+(ohip, fname, lname);
+
+-- Check to prove that the table was empty first. Then inser patient "Philip Radojcic".
+SELECT * FROM patient;
+INSERT INTO patient VALUES(011341337), 'Philip', 'Radojcic');
+
+-- Insert data into the doctor table.
+SELECT * FROM doctor;
+INSERT INTO doctor VALUES('RD34', 'Bernie', 'Kavorikian', 'Urologist', '1980-09-09', NULL);
+INSERT INTO doctor VALUES('GD56', 'Joey', 'Shabado', 'Podiatrist', '1960-06-24', NULL);
+INSERT INTO doctor VALUES('HT45', 'Ross', 'Clooney', 'Surgeon', '1987-06-20', NULL);
+INSERT INTO doctor VALUES('YT67', 'Ben', 'Spock', 'Pediatrician', '1955-02-20', NULL);
+INSERT INTO doctor VALUES('JK78', 'Mandy', 'Webster','Surgeon', '1990-08-08', NULL);
+INSERT INTO doctor VALUES('SE66', 'Colleen', 'Aziz', 'Surgeon', '1989-08-24', NULL);
+INSERT INTO doctor VALUES('HI03', 'Steven', 'Strange', 'Surgeon', '2018-01-01', NULL);
+SELECT * FROM doctor;
+
+-- Insert data into the hospital table.
+SELECT * FROM hospital;
+INSERT INTO hospital VALUES('BBC', 'St. Joseph', 'London', 'On', 1000, 'GD56', '1999-09-10');
+INSERT INTO hospital VALUES('ABC', 'Victoria', 'London', 'On', 1600, 'SE66', '1994-12-05');
+INSERT INTO hospital VALUES('DDE', 'Victoria', 'Victoria', 'BC', 1200, 'YT67', '1997-12-07');
+SELECT * FROM hospital;
+
+-- Insert data into the patientdoctor table.
+SELECT * FROM patientdoctor;
+INSERT INTO patientdoctor VALUES('GD56', 110112113);
+INSERT INTO patientdoctor VALUES('HT45', 444555666);
+INSERT INTO patientdoctor VALUES('JK78', 444555666);
+INSERT INTO patientdoctor VALUES('SE66', 111222333);
+INSERT INTO patientdoctor VALUES('JK78', 111222333);
+INSERT INTO patientdoctor VALUES('GD56', 333444555);
+INSERT INTO patientdoctor VALUES('GD56', 667766777);
+INSERT INTO patientdoctor VALUES('YT67', 667766777);
+INSERT INTO patientdoctor VALUES('JK78', 667766777);
+INSERT INTO patientdoctor VALUES('YT67', 111222111);
+INSERT INTO patientdoctor VALUES('HI03', 011341337);
+INSERT INTO patientdoctor VALUES('YT67', 011341337);
+SELECT * FROM patientdoctor;
+
+-- Update #1 - Now that the hospital table is finished it's time to update which doctor works where.
+SELECT * FROM doctor;
+UPDATE doctor SET worksathospcode = 'BBC' WHERE licenumb = 'RD34';
+UPDATE doctor SET worksathospcode = 'BBC' WHERE licenumb = 'GD56';
+UPDATE doctor SET worksathospcode = 'BBC' WHERE licenumb = 'JK78';
+UPDATE doctor SET worksathospcode = 'ABC' WHERE licenumb = 'SE66';
+UPDATE doctor SET worksathospcode = 'ABC' WHERE licenumb = 'XY33';
+UPDATE doctor SET worksathospcode = 'DDE' WHERE licenumb = 'HT45';
+UPDATE doctor SET worksathospcode = 'DDE' WHERE licenumb = 'YT67';
+SELECT * FROM doctor;
+
+-- Update #1 - Change the data so that patient "111222111" has the last name Brown.
+SELECT * FROM patient;
+UPDATE patient SET lastname = 'Brown' WHERE ohip = 111222111;
+SELECT * FROM patient;
+
+-- Update #1 - Change the data so each patient with Dr.Spock as their doctor now has Dr. Clooney.
+SELECT * FROM patientdoctor;
+UPDATE patientdoctor SET doclicenumb = (SELECT licenumb FROM doctor WHERE lname = 'Clooney') WHERE doclicenumb IN (SELECT licenumb FROM doctor WHERE lname = 'Spock');
+SELECT * FROM patientdoctor;

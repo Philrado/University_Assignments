@@ -1,0 +1,35 @@
+-- ASSIGNMENT 2 SCRIPT 1:
+
+-- List all databases that are currently owned/created.
+SHOW DATABASES;
+
+-- Delete database if it already exists.
+DROP DATABASE pradojciassign2db;
+
+-- Create the database for this assignment and connect to it for editting.
+CREATE DATABASE pradojciassign2db;
+USE  pradojciassign2db;
+
+-- Grant the Teacher Assistant (TA) access.
+GRANT USAGE ON *.* TO 'ta'@'localhost';
+DROP USER 'ta'@'localhost';
+CREATE USER 'ta'@'localhost' IDENTIFIED BY 'cs3319';
+GRANT ALL PRIVILEGES ON pradojciassign2db.* TO 'ta'@'localhost';
+FLUSH PRIVILEGES;
+
+-- List all the current tables.
+SHOW TABLES;
+
+-- Create hospital table.
+CREATE TABLE hospital(hospcode CHAR(3) NOT NULL, hospname VARCHAR(20), city VARCHAR(20), province CHAR(2), bednumb INT, headdoclicenumb CHAR(4), headdocstartdate DATE, FOREIGN KEY(headdoclicenumb) REFERENCES doctor(licenumb), PRIMARY KEY(hospcode));
+-- Create doctor table.
+CREATE TABLE doctor(licenumb CHAR(4) NOT NULL, fname VARCHAR(20), lname VARCHAR(20), specialty VARCHAR(30), licedate DATE, worksathospcode CHAR(3), PRIMARY KEY(licenumb));
+-- Create patient table. 
+CREATE TABLE patient(ohip INT NOT NULL, fname VARCHAR(20), lname VARCHAR(20),PRIMARY KEY(ohip));
+-- Create patientdoctor table.
+CREATE TABLE patientdoctor(doclicenumb CHAR(4) NOT NULL, patientohip INT NOT NULL, FOREIGN KEY(doclicenumb) REFERENCES doctor(licenumb) ON DELETE CASCADE,FOREIGN KEY(patientohip) REFERENCES patient(ohip), PRIMARY KEY(doclicenumb, patientohip));
+
+-- Change the worksinhospitalcode to be a foreign key.
+ALTER TABLE doctor
+ADD FOREIGN KEY (worksathospcode) REFERENCES hospital(hospcode);
+SHOW TABLES;

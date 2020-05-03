@@ -1,0 +1,138 @@
+--------------
+SHOW DATABASES
+--------------
+
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| pradojciassign2db  |
+| vetoffice          |
++--------------------+
+5 rows in set (0.00 sec)
+
+--------------
+DROP DATABASE pradojciassign2db
+--------------
+
+Query OK, 3 rows affected (0.37 sec)
+
+--------------
+CREATE DATABASE pradojciassign2db
+--------------
+
+Query OK, 1 row affected (0.00 sec)
+
+--------------
+GRANT USAGE ON *.* TO 'ta'@'localhost'
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+DROP USER 'ta'@'localhost'
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE USER 'ta'@'localhost' IDENTIFIED BY 'cs3319'
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+GRANT ALL PRIVILEGES ON pradojciassign2db.* TO 'ta'@'localhost'
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+FLUSH PRIVILEGES
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+SHOW TABLES
+--------------
+
+Empty set (0.00 sec)
+
+--------------
+CREATE TABLE patient(ohip INT NOT NULL, fname VARCHAR(20), lname VARCHAR(20),PRIMARY KEY(ohip))
+--------------
+
+Query OK, 0 rows affected (0.23 sec)
+
+--------------
+CREATE TABLE doctor(licenumb CHAR(4) NOT NULL, fname VARCHAR(20), lname VARCHAR(20), specialty VARCHAR(30), licedate DATE, worksathospcode CHAR(3), PRIMARY KEY(licenumb))
+--------------
+
+Query OK, 0 rows affected (0.07 sec)
+
+--------------
+CREATE TABLE hospital(hospcode CHAR(3) NOT NULL, hospname VARCHAR(20), city VARCHAR(20), province CHAR(2), bednumb INT, headdoclicenumb CHAR(4), headdocstartdate DATE, FOREIGN KEY(headdoclicenumb) REFERENCES doctor(licenumb), PRIMARY KE$
+--------------
+
+Query OK, 0 rows affected (0.06 sec)
+
+--------------
+CREATE TABLE patientdoctor(doclicenumb CHAR(4) NOT NULL, patientohip INT NOT NULL, FOREIGN KEY(doclicenumb) REFERENCES doctor(licenumb) ON DELETE CASCADE,FOREIGN KEY(patientohip) REFERENCES patient(ohip), PRIMARY KEY(doclicenumb, patien$
+--------------
+
+Query OK, 0 rows affected (0.12 sec)
+
+--------------
+
+Empty set (0.00 sec)
+
+--------------
+CREATE TABLE patient(ohip INT NOT NULL, fname VARCHAR(20), lname VARCHAR(20),PRIMARY KEY(ohip))
+--------------
+
+Query OK, 0 rows affected (0.23 sec)
+
+--------------
+CREATE TABLE doctor(licenumb CHAR(4) NOT NULL, fname VARCHAR(20), lname VARCHAR(20), specialty VARCHAR(30), licedate DATE, worksathospcode CHAR(3), PRIMARY KEY(licenumb))
+--------------
+
+Query OK, 0 rows affected (0.07 sec)
+
+--------------
+CREATE TABLE hospital(hospcode CHAR(3) NOT NULL, hospname VARCHAR(20), city VARCHAR(20), province CHAR(2), bednumb INT, headdoclicenumb CHAR(4), headdocstartdate DATE, FOREIGN KEY(headdoclicenumb) REFERENCES doctor(licenumb), PRIMARY KE$
+--------------
+
+Query OK, 0 rows affected (0.06 sec)
+
+--------------
+CREATE TABLE patientdoctor(doclicenumb CHAR(4) NOT NULL, patientohip INT NOT NULL, FOREIGN KEY(doclicenumb) REFERENCES doctor(licenumb) ON DELETE CASCADE,FOREIGN KEY(patientohip) REFERENCES patient(ohip), PRIMARY KEY(doclicenumb, patien$
+--------------
+
+Query OK, 0 rows affected (0.12 sec)
+
+--------------
+ALTER TABLE doctor
+ADD FOREIGN KEY (worksathospcode) REFERENCES hospital(hospcode)
+--------------
+
+Query OK, 0 rows affected (0.24 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+--------------
+SHOW TABLES
+--------------
+
++-----------------------------+
+| Tables_in_pradojciassign2db |
++-----------------------------+
+| doctor                      |
+| hospital                    |
+| patient                     |
+| patientdoctor               |
++-----------------------------+
+4 rows in set (0.00 sec)
+
+Bye

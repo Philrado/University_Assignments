@@ -1,0 +1,152 @@
+ERROR 1451 (23000) at line 8: Cannot delete or update a parent row: a foreign key constraint fails (`pradojciassign2db`.`hospital`, CONSTRAINT `hospital_ibfk_1` FOREIGN KEY (`headdoclicenumb`) REFERENCES `doctor` (`licenumb`))
+--------------
+DELETE FROM doctor WHERE licedate < '1965-01-01'
+--------------
+
+--------------
+CREATE VIEW file4view AS SELECT patient.fname, patient.lname, doctor.lname AS "doctorname", hospname FROM patient, doctor JOIN hospital WHERE licenumb IN (SELECT headdoclicenumb FROM hospital WHERE headdocstartdate > '1995-12-31') AND l$
+--------------
+
+--------------
+SELECT * FROM file4view
+--------------
+
++---------+--------+------------+------------+
+| fname   | lname  | doctorname | hospname   |
++---------+--------+------------+------------+
+| Bill    | Gellar | Shabado    | St. Joseph |
+| Colleen | Gellar | Shabado    | St. Joseph |
+| Scotty  | Bing   | Shabado    | St. Joseph |
++---------+--------+------------+------------+
+3 rows in set (0.00 sec)
+
+--------------
+SELECT * FROM doctor
+--------------
+
++----------+---------+------------+--------------+------------+-----------------+
+| licenumb | fname   | lname      | specialty    | licedate   | worksathospcode |
++----------+---------+------------+--------------+------------+-----------------+
+| GD56     | Joey    | Shabado    | Podiatrist   | 1960-06-24 | BBC             |
+| HI03     | Steven  | Strange    | Surgeon      | 2018-01-01 | NULL            |
+| JK78     | Mandy   | Webster    | Surgeon      | 1990-08-08 | BBC             |
+| RD34     | Bernie  | Kavorikian | Urologist    | 1980-09-09 | BBC             |
+| SE66     | Colleen | Aziz       | Surgeon      | 1989-08-24 | ABC             |
+| YT67     | Ben     | Spock      | Pediatrician | 1955-02-20 | DDE             |
++----------+---------+------------+--------------+------------+-----------------+
+6 rows in set (0.00 sec)
+
+--------------
+SELECT * FROM patientdoctor
+--------------
+
++-------------+-------------+
+| doclicenumb | patientohip |
++-------------+-------------+
+| HI03        |    11341337 |
+| GD56        |   110112113 |
+| JK78        |   111222333 |
+| SE66        |   111222333 |
+| GD56        |   333444555 |
+| JK78        |   444555666 |
+| GD56        |   667766777 |
+| JK78        |   667766777 |
++-------------+-------------+
+8 rows in set (0.00 sec)
+
+--------------
+DELETE FROM doctor WHERE lname = 'Clooney'
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+SELECT * FROM doctor
+--------------
+
++----------+---------+------------+--------------+------------+-----------------+
+| licenumb | fname   | lname      | specialty    | licedate   | worksathospcode |
++----------+---------+------------+--------------+------------+-----------------+
+| GD56     | Joey    | Shabado    | Podiatrist   | 1960-06-24 | BBC             |
+| HI03     | Steven  | Strange    | Surgeon      | 2018-01-01 | NULL            |
+| JK78     | Mandy   | Webster    | Surgeon      | 1990-08-08 | BBC             |
+| RD34     | Bernie  | Kavorikian | Urologist    | 1980-09-09 | BBC             |
+| SE66     | Colleen | Aziz       | Surgeon      | 1989-08-24 | ABC             |
+| YT67     | Ben     | Spock      | Pediatrician | 1955-02-20 | DDE             |
++----------+---------+------------+--------------+------------+-----------------+
+6 rows in set (0.00 sec)
+
+--------------
+SHOW CREATE TABLE patientdoctor
+--------------
+
++---------------+----------------------------------------------------------------------------------------------------------$
+| Table         | Create Table                                                                                             $
++---------------+----------------------------------------------------------------------------------------------------------$
+| patientdoctor | CREATE TABLE `patientdoctor` (
+  `doclicenumb` char(4) NOT NULL,
+  `patientohip` int(11) NOT NULL,
+  PRIMARY KEY (`doclicenumb`,`patientohip`),
+  KEY `patientohip` (`patientohip`),
+  CONSTRAINT `patientdoctor_ibfk_1` FOREIGN KEY (`doclicenumb`) REFERENCES `doctor` (`licenumb`) ON DELETE CASCADE,
+  CONSTRAINT `patientdoctor_ibfk_2` FOREIGN KEY (`patientohip`) REFERENCES `patient` (`ohip`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 |
++---------------+----------------------------------------------------------------------------------------------------------$
+1 row in set (0.00 sec)
+
+--------------
+SELECT * FROM doctor
+--------------
+
++----------+---------+------------+--------------+------------+-----------------+
+| licenumb | fname   | lname      | specialty    | licedate   | worksathospcode |
++----------+---------+------------+--------------+------------+-----------------+
+| GD56     | Joey    | Shabado    | Podiatrist   | 1960-06-24 | BBC             |
+| HI03     | Steven  | Strange    | Surgeon      | 2018-01-01 | NULL            |
+| JK78     | Mandy   | Webster    | Surgeon      | 1990-08-08 | BBC             |
+| RD34     | Bernie  | Kavorikian | Urologist    | 1980-09-09 | BBC             |
+| SE66     | Colleen | Aziz       | Surgeon      | 1989-08-24 | ABC             |
+| YT67     | Ben     | Spock      | Pediatrician | 1955-02-20 | DDE             |
++----------+---------+------------+--------------+------------+-----------------+
+6 rows in set (0.00 sec)
+
+--------------
+SHOW CREATE TABLE patientdoctor
+--------------
+
++---------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------$
+| Table         | Create Table                                                                                                                                                                                                              $
++---------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------$
+| patientdoctor | CREATE TABLE `patientdoctor` (
+  `doclicenumb` char(4) NOT NULL,
+  `patientohip` int(11) NOT NULL,
+  PRIMARY KEY (`doclicenumb`,`patientohip`),
+  KEY `patientohip` (`patientohip`),
+  CONSTRAINT `patientdoctor_ibfk_1` FOREIGN KEY (`doclicenumb`) REFERENCES `doctor` (`licenumb`) ON DELETE CASCADE,
+  CONSTRAINT `patientdoctor_ibfk_2` FOREIGN KEY (`patientohip`) REFERENCES `patient` (`ohip`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 |
++---------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------$
+1 row in set (0.00 sec)
+
+--------------
+SELECT * FROM doctor
+--------------
+
++----------+---------+------------+--------------+------------+-----------------+
+| licenumb | fname   | lname      | specialty    | licedate   | worksathospcode |
++----------+---------+------------+--------------+------------+-----------------+
+| GD56     | Joey    | Shabado    | Podiatrist   | 1960-06-24 | BBC             |
+| HI03     | Steven  | Strange    | Surgeon      | 2018-01-01 | NULL            |
+| JK78     | Mandy   | Webster    | Surgeon      | 1990-08-08 | BBC             |
+| RD34     | Bernie  | Kavorikian | Urologist    | 1980-09-09 | BBC             |
+| SE66     | Colleen | Aziz       | Surgeon      | 1989-08-24 | ABC             |
+| YT67     | Ben     | Spock      | Pediatrician | 1955-02-20 | DDE             |
++----------+---------+------------+--------------+------------+-----------------+
+6 rows in set (0.00 sec)
+
+ERROR 1451 (23000) at line 34: Cannot delete or update a parent row: a foreign key constraint fails (`pradojciassign2db`.`hospital`, CONSTRAINT `hospital_ibfk_1` FOREIGN KEY (`headdoclicenumb`) REFERENCES `doctor` (`licenumb`))
+--------------
+DELETE FROM doctor WHERE specialty = 'Surgeon'
+--------------
+
+Bye
