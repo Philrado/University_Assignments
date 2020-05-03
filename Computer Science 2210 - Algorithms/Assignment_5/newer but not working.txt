@@ -1,0 +1,98 @@
+	/** trip Iterator - with the help of the trip_helper function it solves the graph.
+	 * 
+	 * Returns a Java Iterator containing the nodes along the path
+	 * from the starting point to the destination, if such a path exists. If the path does not exist,
+	 * this method returns the value null. For example for the map and path described above the
+	 * Iterator returned by this method should contain the nodes 0, 1, 5, 6, and 10.
+	 * 
+	 * @return
+	 * @throws GraphException 
+	 * @throws MapException 
+	 */
+	public Iterator<GraphNode> trip() throws GraphException, MapException{
+				
+		// Create a node for the starting position.
+		GraphNode starting_position = graph_construct.getNode(this.starting_point);
+		// Create a node for the end position.
+		GraphNode destination_position = graph_construct.getNode(this.destination);
+		//Creates a Node, start, that contains the the information about the stating position, adds it to the solution list, and marks it as visited.
+		desirable_path.add(starting_position);
+		starting_position.setMark(true);
+		
+		//Calls the solver helper method.
+		solver(graph_construct.incidentEdges(starting_position));
+		
+		//Checks if soluList contains a solution, if not, return null.
+		if (desirable_path .size()==1)return null;
+		//else returns soluList.
+		else {
+			return desirable_path .iterator();
+		}
+	}
+	
+	private List<Node> solver (Iterator<Edge> iter) throws GraphException
+	{
+		//Checks if there are no possible routes, if so, return null.
+		if (iter==null) return null;
+		else
+		{
+			//Keeps looping while there are possible routes.
+			while (iter.hasNext())
+			{
+				//Denotes the start of the label next.
+				next:{
+					 //Creates the variables edge, n, str, check, that will contain the values of the next edge, second end point, 
+					 //the Edge's type, and if the check was visited or not, respectively. 
+					Edge edge=iter.next();Node n = edge.secondEndpoint();String str;boolean check=false;
+					//Checks if the edge that is about to be processed is wall, if it is, check if it is allowed, it is not allowed
+					//break to next, if allowed, precede.
+					if ((str=edge.getType())=="vertical wall"||str=="horizontal wall") if (k<1) break next; else check=true;
+					//Adds the second end point to the soluList, marks the Node as visited, if that node is from a wall edge, decrement k, and change the wall to a hall.
+					soluList.add(n);n.setMark(true);
+					if (check)
+					{
+						k--;
+						if (str=="vertical wall")edge.setType("vertical hall");
+						else edge.setType("horizontal hall");
+					}
+					//Checks if the end is reached, if it is, return soluList.
+					if (n.getName()==end) return soluList;
+					//If not, check there are any possible routes, using the helper method, possibleRoutes.
+					else if (solver(possibleRoutes(graph.incidentEdges(n), edge.firstEndpoint()))==null) 
+					{
+						//If there are no more possible routes, retreat by remove the second end point node from the soluList, increment k if n is
+						//wall type edge and rebuild the wall, reset mark to unvisited, and set the edges label to "Dead End!"
+						soluList.remove(n);n.setMark(false);edge.setLabel("Dead End!");
+						if (check)
+						{
+							k++;
+							if (str=="vertical hall")edge.setType("vertical wall");
+							else edge.setType("horizontal wall");
+						}
+					//Checks if the last value of the soluList is the end point, if it is, return soluList.
+					}if (soluList.get(soluList.size()-1).getName()==end) return soluList;
+				}
+			}
+		//If the solution was not found return null.
+		}return null;
+	}
+	
+	private Iterator<Edge> possibleRoutes(Iterator<Edge> iter, Node parent)
+	{
+		//Creates an ArrayList that will hold a list of the possible routes.
+		List<Edge> possibleRoutes= new ArrayList<>();
+		//Loops while there are still more adjacent edges.
+		while (iter.hasNext())
+		{
+			//Creates and initializes edge, and node, that will hold the information of the next a adjacent node to parent, and second
+			//end point of the edge, respectively.
+			Edge edge = iter.next();
+			//Checks the second end point, the destination of the edge, has already been visited, or if it is a dead end, if neither, 
+			//add the edge to the possible routes list.
+			if (!edge.secondEndpoint().getMark()&&edge.getLabel()!="Dead End!")possibleRoutes.add(edge);
+		}
+		//Checks if the list is empty, if it is not, return an iterator of the shuffled possibleRoutes list.
+		if (!possibleRoutes.isEmpty()) return shuffle(possibleRoutes).iterator();
+		//if it is empty, return null.
+		return null;
+	}

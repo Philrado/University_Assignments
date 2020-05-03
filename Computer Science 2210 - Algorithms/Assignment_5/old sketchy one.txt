@@ -1,0 +1,116 @@
+	/** trip_helper - additional method made using a stack to perform a DFS traversal as suggested by the hint.
+	 * actually does all the solving.
+	 * 
+	 * @param firstNode
+	 * @param secondNode
+	 * @param graph
+	 * @return
+	 * @throws GraphException 
+	 */
+	private Stack<GraphNode> trip_helper(GraphNode firstNode, GraphNode secondNode, Graph graph) throws GraphException{
+		
+		 int busLine_transfers = 0;
+		 //busLine_amount_k;
+		
+		 try {
+	            // Create a temporary stack and solution stack construct. 
+			 	// then push the starting node into the temporary stack.
+	            Stack<GraphNode> temp_stack = new Stack<GraphNode>();
+	            temp_stack.push(firstNode);
+	            Stack<GraphNode> solution_stack = new Stack<GraphNode>();
+	            
+	            // Base case if the start and destination nodes are now the same.
+	            if (firstNode == secondNode) {
+	                return temp_stack;
+	            }
+	            // Otherwise do the regular search:
+	            else {	       
+		            // while there are still incident edges to go through, recursively go to unmarked node connections (edges):
+		            while (graph.incidentEdges(firstNode).hasNext()) {
+		            	// holds the next edge to search for convenience sake.
+		                GraphEdge next_edge = graph.incidentEdges(firstNode).next();
+		                if(next_edge.firstEndpoint() != firstNode && next_edge.firstEndpoint().getMark() == false) {
+		                	// Only continues forward if the busLine transfers are less then the alloted amount.
+		                	if (busLine_transfers < busLine_amount_k) {
+			                	// the iterator will start to contribute to the solution stack.
+			                	solution_stack = trip_helper(next_edge.firstEndpoint(), secondNode, graph);  
+		                	}	
+		                	else {
+		                		temp_stack.pop();
+		                		busLine_transfers --;
+		                		return solution_stack;
+		                	}
+		                    // after making sure it actually had values added to it, return it.
+		                    if (solution_stack != null) {
+		                        return solution_stack;
+		                    }
+		                }
+		                else if (next_edge.secondEndpoint() != firstNode && next_edge.firstEndpoint().getMark() == false) {
+		                	// Only continues forward if the busLine transfers are less then the alloted amount.
+		                	if (busLine_transfers < busLine_amount_k) {
+		                		// the iterator will finish contributing to the solution stack.
+		                		solution_stack = trip_helper(next_edge.secondEndpoint(), secondNode, graph);
+		                	}	
+		                	else {
+		                		temp_stack.pop();
+		                		busLine_transfers --;
+		                		return solution_stack;
+		                	}
+		                    // after making sure it actually had values added to it, return it.
+		                    if (solution_stack != null) {
+		                        return solution_stack;
+		                    }
+		                }
+		            }
+	            // pop the latest value of the temporary stack out and return null.
+	            temp_stack.pop();
+	            return null;
+	            }
+	            
+			} catch (GraphException exception){
+				
+				throw new GraphException("ERROR: Invalid busline");
+			}
+    }
+	
+	/** trip Iterator - with the help of the trip_helper function it solves the graph.
+	 * 
+	 * Returns a Java Iterator containing the nodes along the path
+	 * from the starting point to the destination, if such a path exists. If the path does not exist,
+	 * this method returns the value null. For example for the map and path described above the
+	 * Iterator returned by this method should contain the nodes 0, 1, 5, 6, and 10.
+	 * 
+	 * @return
+	 * @throws GraphException 
+	 * @throws MapException 
+	 */
+	public Iterator<GraphNode> trip() throws GraphException, MapException{
+		
+		// Attempts to set all the node marks to false at the start.
+		// Assuming the graph is properly defined it will complete.
+		try {
+            Graph temp_graph = getGraph();
+            int graph_size = (length_h)*(width_w);
+
+            for (int node_index = 0; node_index < graph_size; node_index++) {
+            	temp_graph.getNode(node_index).setMark(false);
+            }
+            
+		} catch (MapException exception){
+			
+			throw new MapException("ERROR: The file does not exist.");
+			
+		} catch (GraphException exception){
+			
+			throw new GraphException("ERROR: Invalid busline");
+		}
+		
+		// Create a node for the starting position.
+		GraphNode starting_position = graph_construct.getNode(this.starting_point);
+		// Create a node for the end position.
+		GraphNode destination_position = graph_construct.getNode(this.destination);
+		
+		Iterator<GraphNode> solution = trip_helper(starting_position, destination_position, graph_construct).iterator();
+		
+		return solution;
+	}
