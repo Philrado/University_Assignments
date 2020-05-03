@@ -1,0 +1,77 @@
+=================================================================================
+ File Name    assignment1_part2.c
+ Author       Philip Radojcic
+ Description  Accepts 2 integers from command line prompts.
+				 The program creates a parent and child process, where the parent
+				 reads int 1, and the child reads int 2. The child sense #2 to the
+				 parent through a pipe, and the parent will add 1# to #2 and output
+				 the sum.
+ Latest Edit  1072019
+=================================================================================
+
+ Include List
+#include stdio.h
+#include stdint.h
+#include stdlib.h
+#include time.h
+#include string.h
+#include unistd.h
+#include math.h
+#include systypes.h
+#include syswait.h
+#include errno.h
+
+int main(int argc, char argv[] ) {
+
+	 Creates a fork of the main process, therefore creating a child for the parent process.
+	pid_t fork_call, child, parent;
+	fork_call = fork();
+	
+	 Creates an int array for the pipe() call to store both integer inputs.
+	int pipeline[2];
+	 creating a pipe
+	pipe(pipeline);
+	
+	 If fork() fails and the child is not created.
+	if (fork_call  0)
+	{
+		printf (The fork() process was unsuccessful and no child was created.);
+		exit(1);
+	}
+	
+	 The current process running is the parent.
+	if (fork_call  0)
+	{
+		parent = getppid();
+		child = getpid();
+		printf(A pipe is created for communication between parent (PID %d) and child.n, child);
+		printf(Parent process (PID %d) created child (PID %d).n, parent, child);
+					
+		 Converts the string read from the command prompt into an integer.
+		int X = atoi(argv[1]);
+		printf(parent(PID %d) is reading X = %d from the user.n, parent, X);
+		
+		 Wait for the child process to finish being created.
+		wait(NULL);
+		
+		 Reads converts the string read from the pipe into an integer.
+		int Y = read(pipeline[0], Y, strlen(argv[2]));
+		printf(parent(PID %d) is reading Y from the pipe (Y = %d).n, parent, Y);
+		
+		 Calculate and output the sum obtained.
+		int sum = X + Y;
+		printf(parent(PID %d) is adding X + Y = %d.n, parent, sum);
+	}
+	
+	 The current process running is the child.
+	if (fork_call == 0) 
+	{
+		child = getpid();
+		 converts the string read from the command prompt into an integer.
+		int Y = atoi(argv[1]);
+		printf(child(PID %d) Reading Y = %d from the user.n, child, Y);
+		 Writes the integer Y obtained from the user into the pipe for the parent to read.
+		write(pipeline[1], Y, strlen(Y)+1);
+		printf(child (PID %d) is writing Y into the pipe.n, child);
+	}
+}
