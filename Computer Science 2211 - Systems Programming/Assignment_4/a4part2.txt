@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int main()
+{
+	// Initialize variables.
+	// epsilon is the input, ncheck is the value that must be smaller then epsilon,
+	// final_forumla calculates pi, n is counted till the smallest integer for the formula.
+	double epsilon, ncheck, final_formula = 0.0;
+	long long n = 0;
+	ncheck = 10000;
+
+	// Input request and storage.
+	printf("\nPlease enter a value for epsilon: ");
+	scanf("%lf", &epsilon);
+
+	// Goes till ncheck is smaller then epsilon.
+	while (ncheck > epsilon) {
+		// Adds to the n counter, and (re)calculates the ncheck and final formula.
+		n++;
+		ncheck =  4 / (double)(2 * (n + 1) - 1);
+		final_formula += (pow(-1, (n + 1))) * (4 / (double)((2 * n) - 1));
+   	 }
+
+	// Output.
+    	printf("\nOutput of formula: %.10f", final_formula);
+    	printf("\n\n");
+
+   	 return 0;
+}
