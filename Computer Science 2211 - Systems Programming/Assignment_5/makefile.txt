@@ -1,0 +1,21 @@
+
+mymatrix: main.o matrix.o bstree.o datatype.o
+        gcc -o mymatrix main.o matrix.o bstree.o datatype.o
+
+main.o : main.c
+        gcc -std=c99 -c main.c
+
+matrix.o : matrix.c
+        gcc -std=c99 -c matrix.c
+
+bstree.o : bstree.c
+        gcc -std=c99 -c bstree.c
+
+datatype.o : datatype.c
+        gcc -std=c99 -c datatype.c
+
+clean :
+        rm -f *.o mymatrix
+
+run :
+        ./mymatrix

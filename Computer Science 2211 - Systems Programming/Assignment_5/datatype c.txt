@@ -1,0 +1,112 @@
+// In the file datatype.c, implement the functions for type Data and type Key.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "datatype.h"
+
+// Duplicate string pointed to by str with dynamic memory allocation.
+char * string_dup(char *str){
+
+	// Initialize variable names.
+	int size;
+	char *duplicate;
+	char *temporary_duplicate;
+
+	// Check if the string is empty as the base case.
+	if (str == NULL){
+		return NULL;
+	}
+
+	// Allocate the dynamic memory for the duplicate.
+	// Initialize the variable values.
+	size = strlen(str);
+	duplicate = (char *)malloc(sizeof(char)*size+1);
+
+	 // Copy the string over to the temporary string and back.
+	temporary_duplicate = duplicate;
+	while(*str)
+	{
+		*temporary_duplicate = *str;
+		temporary_duplicate++;
+		str++;
+	}
+
+	// Return the propery copy.
+	*temporary_duplicate = '\0';
+	return(duplicate);
+ }
+
+//---------------------------------------------------------------------------------------------------------------------------------- Keys
+
+
+// Generate a key with dynamic memory allocation.
+Key key_gen(char *skey1, char *skey2){
+
+	char *skey1_pointer = string_dup(skey1);
+	char *skey2_pointer = string_dup(skey2);
+	Key_struct key = {skey1_pointer, skey2_pointer};
+	Key key_return = &(key);
+	return key_return;
+}
+
+// Use strcmp( ) to do comparison. If key1->skey1 and key2->skey1 are different, then
+// they determine the comparison result. If key1->skey1 and key2->skey1 are the same,
+// then key1->skey2 and key2->skey2 determine the comparison result.
+int key_comp(Key key1, Key key2){
+
+        int comparison1 = strcmp(key1 -> skey1, key2 -> skey1);
+        int comparison2 = strcmp(key2 -> skey2, key2 -> skey2);
+
+        if (comparison1 != 0) {
+                return comparison1;
+        }
+        else if (comparison2 != 0) {
+                return comparison2;
+        }
+        return 0;
+}
+
+
+// Print a key.
+void key_print(Key key){
+
+	printf ("\n %s %10s %s", key -> skey1, key -> skey2);
+}
+
+
+// Free memory allocated for key.
+void key_free(Key key){
+
+        free(key -> skey1);
+        free(key -> skey2);
+        free(key);
+}
+
+
+//------------------------------------------------------------------------------------------------------------------------------------ Data
+
+// Generate a data with dynamic memory allocation.
+Data data_gen(int idata){
+	    
+	Data data = &(idata);
+	return data;    
+}
+
+// Assign data with idata.
+void data_set(Data data, int idata){
+
+        *data = idata;
+}
+
+// Print a data.
+void data_print(Data data){
+
+         printf ("\r%10d", data);
+}
+
+// Free memory allocated for data.
+void data_free(Data data){
+
+	free(data);
+}

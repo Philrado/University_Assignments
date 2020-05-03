@@ -1,0 +1,79 @@
+// In the file matrix.c, implement the functions on Matrix.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "matrix.h"
+
+// Matrix construction using bstree ini();
+Matrix matrix_construction(void){
+    Matrix matrix = bstree_ini();
+    return matrix;
+}
+
+// If location (index1, index2) is defined in Matrix m, then return 1. Otherwise, return 0.
+unsigned char matrix_isin(Matrix m, Index index1, Index index2){
+
+    Key key = key_gen(index1, index2);
+
+    if (bstree_search(m, key) != NULL){
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+// If location (index1, index2) is defined in Matrix m, then return a pointer to the associated
+// value. Otherwise, return NULL.
+Value *matrix_get(Matrix m, Index index1, Index index2){
+
+    if (matrix_isin(m, index1, index2) == 0){
+        return NULL;
+    }
+    else {
+        Key key = key_gen(index1, index2);
+        return bstree_search(m, key);
+    }
+}
+
+// Assign value to Matrix m at location (index1, index2). If that location already has value,
+// then overwrite.
+void matrix_set(Matrix m, Index index1, Index index2, Value value){
+
+    Key key = key_gen(index1, index2);
+    Data data = data_gen(value);
+
+    if (matrix_isin(m, index1, index2) == 0){
+        bstree_insert(m, key, data);
+    }
+    else {
+        matrix_inc(m, index1, index2, 1);
+    }
+}
+
+// If location (index1, index2) is defined in Matrix m, then increase the associated value by
+// value. Otherwise, report error.
+void matrix_inc(Matrix m, Index index1, Index index2, Value value){
+
+    Value *get_pointer = matrix_get(m, index1, index2);
+
+    if (get_pointer == NULL){
+        printf("Error: the location defined by your string pair was not defined in the matrix.");
+    }
+    else {
+        data_set(get_pointer, *get_pointer + value);
+    }
+}
+
+
+// Print indices and values in the Matrix m (with bstree traversal()).
+void matrix_list(Matrix m){
+    printf("String 1          String 2          Occurrence(Data):");
+    bstree_traversal(m);
+}
+
+// Free allocated space (with bstree free()).
+void matrix_destruction(Matrix m){
+    bstree_free(m);
+}

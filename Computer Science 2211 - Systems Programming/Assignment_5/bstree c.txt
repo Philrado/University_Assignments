@@ -1,0 +1,173 @@
+// In the file bstree.c, implement the functions on BStree.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "bstree.h"
+
+// typedef struct BStree_node {
+//      Key key;
+//      Data data;
+//      struct BStree_node *left, *right;
+// } BStree_node;
+// typedef BStree_node** BStree;
+
+// Allocate memory of type BStree node*, set the value to NULL, and return a pointer to the
+// allocated memory.
+BStree bstree_ini(void){
+
+        BStree BStree_empty = (BStree)malloc(sizeof(BStree_node));
+        *BStree_empty = NULL;
+        return BStree_empty;
+}
+
+// Helper method that creates a new node.
+BStree_node *new_node(Key key, Data data){
+
+        BStree_node *newNode = malloc(sizeof(BStree_node));
+        newNode -> key = key;
+        newNode -> data = data;
+        newNode -> left = NULL;
+        newNode -> right = NULL;
+        return newNode;
+
+}
+
+// Helper method for the bst insert.
+void bstree_insert_helper(BStree_node *node_pointer, Key key, Data data){
+
+        // If the key is not in the bst, and the bst is empty. Appropriately place it.
+	if (key_comp(key, node_pointer -> key) < 0 ){
+		if (node_pointer -> left == NULL){
+			node_pointer -> left = new_node(key, data);
+		}
+		else{
+			bstree_insert_helper(node_pointer -> left, key, data);
+		}
+	}
+	else if (key_comp(key, node_pointer -> key) > 0 ){
+		if (node_pointer -> right == NULL){
+			node_pointer -> right = new_node(key, data);
+		}
+		else{
+			bstree_insert_helper(node_pointer -> right, key, data);
+		}
+	}
+	else {
+		return;
+	}
+}
+
+// Insert data with key into bst. If key is in bst, then do nothing.
+// You may want to use a helper function for insertion to create a pointer to a tree node from
+// key and data.
+void bstree_insert(BStree bst, Key key, Data data){
+
+        BStree_node *node_pointer = *bst;	
+
+        // If the key is not in the bst, and the bst is empty, make a new node.
+        if (node_pointer == NULL){
+                node_pointer  = new_node(key, data);
+        }
+        else {
+                 bstree_insert_helper(node_pointer , key, data);
+        }
+}
+
+// Helper function for bstree search.
+Data bstree_search_helper(BStree_node *node_pointer, Key key){
+     
+
+	if (key_comp(key, node_pointer -> key) == 0){
+		return node_pointer -> data;		
+	}
+        	// The key parameter is greater than thenode_pointer's key. 
+	else if (key_comp(key, node_pointer -> key) < 0 ){
+		return bstree_search_helper(node_pointer -> right, key); 
+	}
+	// The key parameter is smaller than the node_pointer's key.
+	else if (key_comp(key, node_pointer -> key) > 0 ){
+		return bstree_search_helper(node_pointer -> left, key); 
+	}
+	else {
+		return NULL;
+	}
+}
+
+// If key is in bst, return key’s associated data. If key is not in bst, return NULL.
+Data bstree_search(BStree bst, Key key){
+
+	// Base case. bst is null. 
+	if (bst == NULL){
+		return NULL; 
+	}
+
+	BStree_node *node_pointer = *bst;
+	Data data_return = bstree_search_helper(node_pointer, key);
+
+	if (data_return == NULL) {
+		return NULL;
+	}
+	else {
+		return data_return;
+	}
+}
+
+// Helper function for bstree traversal.
+void bstree_traversal_helper(BStree_node *node_pointer){
+
+        if (node_pointer == NULL){
+                return;
+        } 
+  
+        // First recursively traverse on the left child. 
+        bstree_traversal_helper(node_pointer -> left); 
+  
+        // After print the node's data and key. 
+        key_print(node_pointer -> key);
+        data_print(node_pointer -> data);
+  
+        // Lastly, recursively traverse on the right child. 
+        bstree_traversal_helper(node_pointer -> right); 
+
+}
+
+// In order traversal of bst and print each node’s key and data.
+void bstree_traversal(BStree bst){
+
+        BStree_node *node_pointer = *bst;
+        bstree_traversal_helper(node_pointer);
+}
+
+// Free all the dynamically allocated memory of bst.
+void bstree_free_helper(BStree_node *node_pointer){
+
+        // Free each node recursively. 
+        //      free its left, right,
+        bstree_free_helper(node_pointer -> left);
+        bstree_free_helper(node_pointer -> right);
+
+        // free the nodes data and its key.
+        // free the node itself.
+        key_free(node_pointer -> key);
+        data_free(node_pointer -> data);
+
+        // free node pointer
+        bstree_free_helper(node_pointer);
+}
+
+
+// Free all the dynamically allocated memory of bst.
+void bstree_free(BStree bst){
+      
+        // Base case.
+        if (bst == NULL){
+                return;
+        }
+  
+        BStree_node *node_pointer = *bst;
+        bstree_free_helper(node_pointer);
+        // free the bst.
+        free(bst);
+}
+
